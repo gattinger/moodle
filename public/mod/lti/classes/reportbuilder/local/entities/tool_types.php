@@ -73,13 +73,13 @@ class tool_types extends base {
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$tablealias}.name, {$tablealias}.icon")
             ->set_is_sortable(true)
-            ->add_callback(static function(string $name, \stdClass $data) {
-                global $OUTPUT;
+            ->add_callback(static function (string $name, \stdClass $data) {
+                global $OUTPUT, $PAGE;
 
+                $name = format_string($data->name, true, ['context' => $PAGE->context]);
                 $iconurl = $data->icon ?: $OUTPUT->image_url('monologo', 'lti')->out();
                 $iconclass = $data->icon ? ' nofilter' : '';
                 $iconcontainerclass = 'activityiconcontainer smaller';
-                $name = $data->name;
                 $img = \html_writer::img($iconurl, get_string('courseexternaltooliconalt', 'mod_lti', $name),
                     ['class' => 'activityicon' . $iconclass]);
                 $name = \html_writer::span($name, 'align-self-center');
@@ -95,7 +95,10 @@ class tool_types extends base {
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$tablealias}.description")
-            ->set_is_sortable(true);
+            ->set_is_sortable(true)
+            ->add_callback(static function (string $description): string {
+                return format_string($description, true);
+            });
 
         // Course column.
         $columns[] = (new column(
