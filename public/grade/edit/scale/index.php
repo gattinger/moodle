@@ -121,7 +121,10 @@ if ($courseid and $scales = grade_scale::fetch_all_local($courseid)) {
     $data = array();
     foreach($scales as $scale) {
         $line = array();
-        $line[] = $scale->get_name() .'<div class="scale_options">'.str_replace(",", ", ", $scale->scale).'</div>';
+        $scaleitems = array_map(function ($item) use ($context) {
+            return format_string(trim($item), true, ['context' => $context]);
+        }, explode(',', $scale->scale));
+        $line[] = $scale->get_name() . '<div class="scale_options">' . implode(', ', $scaleitems) . '</div>';
 
         $used = $scale->is_used();
         $line[] = $used ? get_string('yes') : get_string('no');
@@ -147,7 +150,10 @@ if ($scales = grade_scale::fetch_all_global()) {
     $data = array();
     foreach($scales as $scale) {
         $line = array();
-        $line[] = $scale->get_name().'<div class="scale_options">'.str_replace(",", ", ", $scale->scale).'</div>';
+        $scaleitems = array_map(function ($item) use ($context) {
+            return format_string(trim($item), true, ['context' => $context]);
+        }, explode(',', $scale->scale));
+        $line[] = $scale->get_name() . '<div class="scale_options">' . implode(', ', $scaleitems) . '</div>';
 
         $used = $scale->is_used();
         $line[] = $used ? get_string('yes') : get_string('no');
