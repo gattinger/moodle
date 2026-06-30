@@ -1470,14 +1470,22 @@ class user {
         }
         // If the template is empty, or set to language, return the language string.
         if ((empty($template) || $template == 'language') && !$override) {
-            return get_string('fullnamedisplay', null, $user);
+            return format_string(
+                get_string('fullnamedisplay', null, $user),
+                true,
+                ['context' => $context, 'escape' => false]
+            );
         }
 
         // Check to see if we are displaying according to the alternative full name format.
         if ($override) {
             if (empty($CFG->alternativefullnameformat) || $CFG->alternativefullnameformat == 'language') {
                 // Default to show just the user names according to the fullnamedisplay string.
-                return get_string('fullnamedisplay', null, $user);
+                return format_string(
+                    get_string('fullnamedisplay', null, $user),
+                    true,
+                    ['context' => $context, 'escape' => false]
+                );
             } else {
                 // If the override is true, then change the template to use the complete name.
                 $template = $CFG->alternativefullnameformat;
@@ -1527,7 +1535,8 @@ class user {
             // people in general feel is a good setting to fall back on.
             $displayname = $user->firstname;
         }
-        return $displayname;
+
+        return format_string($displayname, true, ['context' => $context, 'escape' => false]);
     }
 
     /**
@@ -1629,7 +1638,8 @@ class user {
         $initials = '';
         foreach ($availablefields as $userfieldname) {
             if (!empty($user->$userfieldname)) {
-                $initials .= mb_substr($user->$userfieldname, 0, 1);
+                $filtered = format_string($user->$userfieldname, true, ['escape' => false]);
+                $initials .= mb_substr($filtered, 0, 1);
             }
         }
         return $initials;
