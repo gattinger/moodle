@@ -167,3 +167,15 @@ Feature: A teacher can preview questions in the question bank
     And I press "Close preview"
     Then I should not see "(latest)"
     And I should see "Test quiz"
+
+  @javascript
+  Scenario: Question preview shows filtered question name with multilang filter
+    Given the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And the following "questions" exist:
+      | questioncategory | qtype     | name                                                                                           |
+      | Test questions   | numerical | <span class="multilang" lang="en">OnlyEN</span><span class="multilang" lang="de">OnlyDE</span> |
+    When I am on the "Test quiz" "mod_quiz > question bank" page
+    And I choose "Preview" action for "OnlyEN" in the question bank
+    Then I should see "OnlyEN"
+    And I should not see "OnlyDE"
