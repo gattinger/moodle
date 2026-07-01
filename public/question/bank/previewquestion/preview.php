@@ -263,7 +263,7 @@ $previewdata = [];
 
 $previewdata['questionicon'] = print_question_icon($question);
 $previewdata['questionidumber'] = $question->idnumber;
-$previewdata['questiontitle'] = $question->name;
+$previewdata['questiontitle'] = format_string($question->name);
 $versioninfo = new \core_question\output\question_version_info($question);
 $previewdata['versiontitle'] = $versioninfo->export_for_template($OUTPUT);
 if ($versioninfo->version !== $versioninfo->latestversion) {
