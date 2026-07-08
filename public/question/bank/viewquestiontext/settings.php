@@ -15,16 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component qbank_viewquestiontext, language 'en'
+ * Plugin administration pages are defined here.
  *
  * @package    qbank_viewquestiontext
- * @copyright  2021 Catalyst IT Australia Pty Ltd
- * @author     Safat Shahin <safatshahin@catalyst-au.net>
+ * @copyright  2026 Thorsten Gattinger
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['allowedfilters'] = 'Filters allowed for plain question text in the question bank';
-$string['allowedfilters_desc'] = 'Comma separated list without filter_ prefix. Only filters that work on plain text are effective, as HTML tags are stripped before filtering.';
-$string['pluginname'] = 'View question text';
-$string['privacy:metadata'] = 'The View question text question bank plugin does not store any personal data.';
-$string['questiontext_condition'] = 'Question text and general feedback';
+defined('MOODLE_INTERNAL') || die();
+
+if ($ADMIN->fulltree) {
+    $settings->add(new admin_setting_configtext(
+        'qbank_viewquestiontext/allowedfilters',
+        new lang_string('allowedfilters', 'qbank_viewquestiontext'),
+        new lang_string('allowedfilters_desc', 'qbank_viewquestiontext'),
+        ''
+    ));
+}

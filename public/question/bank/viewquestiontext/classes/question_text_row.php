@@ -16,6 +16,7 @@
 
 namespace qbank_viewquestiontext;
 
+use core_filters\filter_manager;
 use core_question\local\bank\row_base;
 use qbank_viewquestiontext\output\question_text_format;
 use question_utils;
@@ -54,12 +55,35 @@ class question_text_row extends row_base {
     }
 
     protected function display_content($question, $rowclasses): void {
+        global $PAGE;
+
         // Access 'showtext' filter from pagevars.
         if ($this->preference !== question_text_format::OFF) {
             $text = '';
             if ($this->preference === question_text_format::PLAIN) {
                 $text = s(question_utils::to_plain_text($question->questiontext,
                         $question->questiontextformat, ['noclean' => true, 'para' => false, 'filter' => false]));
+                $allowedfilters = explode(
+                    ',',
+                    str_replace(' ', '', (string) get_config('qbank_viewquestiontext', 'allowedfilters'))
+                );
+
+                if (!empty($allowedfilters)) {
+                    $context = $PAGE->context;
+                    $filtermanager = filter_manager::instance();
+
+                    $skipfilters = array_diff(
+                        array_keys(filter_get_active_in_context($context)),
+                        $allowedfilters
+                    );
+
+                    $text = $filtermanager->filter_text(
+                        $text,
+                        $context,
+                        ['originalformat' => $question->questiontextformat],
+                        $skipfilters
+                    );
+                }
             } else if ($this->preference === question_text_format::FULL) {
                 $text = question_rewrite_question_preview_urls($question->questiontext, $question->id,
                         $question->contextid, 'question', 'questiontext', $question->id,

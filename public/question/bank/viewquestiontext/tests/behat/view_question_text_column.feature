@@ -37,6 +37,47 @@ Feature: Use the qbank plugin manager page for viewquestiontext
     And I should not see "Answer the first <question>"
 
   @javascript
+  Scenario: Plain mode applies no filters by default
+    Given the "mathjaxloader" filter is "on"
+    And the "mathjaxloader" filter applies to "content and headings"
+    And the following "questions" exist:
+      | questioncategory | qtype     | name             | questiontext          |
+      | Test questions   | truefalse | MathJax question | Equation $$(a+b)=2$$ |
+    When I am on the "Test quiz" "mod_quiz > question bank" page logged in as admin
+    And I apply question bank filter "Category" with value "Test questions"
+    And I set the field "Show question text in the question list?" to "text only"
+    Then I should see "Equation $$(a+b)=2$$"
+    And ".filter_mathjaxloader_equation" "css_element" should not exist in the "Equation $$(a+b)=2$$" "table_row"
+
+  @javascript
+  Scenario: Plain mode applies mathjaxloader filter when it is allowed
+    Given the "mathjaxloader" filter is "on"
+    And the "mathjaxloader" filter applies to "content and headings"
+    And the following config values are set as admin:
+      | allowedfilters | mathjaxloader | qbank_viewquestiontext |
+    And the following "questions" exist:
+      | questioncategory | qtype     | name             | questiontext          |
+      | Test questions   | truefalse | MathJax question | Equation $$(a+b)=2$$ |
+    When I am on the "Test quiz" "mod_quiz > question bank" page logged in as admin
+    And I apply question bank filter "Category" with value "Test questions"
+    And I set the field "Show question text in the question list?" to "text only"
+    Then I should see "Equation $$(a+b)=2$$"
+    And ".filter_mathjaxloader_equation" "css_element" should exist in the "Equation $$(a+b)=2$$" "table_row"
+
+  @javascript
+  Scenario: Full mode applies all filters
+    Given the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
+    And the following "questions" exist:
+      | questioncategory | qtype | name | questiontext |
+      | Test questions | truefalse | Multilang question | <span class="multilang" lang="en">OnlyEN</span><span class="multilang" lang="de">OnlyDE</span> |
+    When I am on the "Test quiz" "mod_quiz > question bank" page logged in as admin
+    And I apply question bank filter "Category" with value "Test questions"
+    And I set the field "Show question text in the question list?" to "with images"
+    Then I should see "OnlyEN"
+    And I should not see "OnlyDE"
+
+  @javascript
   Scenario: Option does not show if the plugin is disabled
     Given the following config values are set as admin:
       | disabled | 1 | qbank_viewquestiontext |
