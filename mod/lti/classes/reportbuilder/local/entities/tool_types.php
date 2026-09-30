@@ -115,8 +115,8 @@ class tool_types extends base {
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$tablealias}.description")
             ->set_is_sortable(true)
-            ->add_callback(static function (string $description): string {
-                return format_string($description, true);
+            ->add_callback(static function (?string $description): string {
+                return format_string($description ?? '', true);
             });
 
         // Course column.
